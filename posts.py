@@ -1,7 +1,10 @@
 from typing import List
 from fastapi import HTTPException, Depends
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from starlette import status
+
+import database
 import models
 import schemas
 from fastapi import APIRouter
@@ -13,22 +16,22 @@ router = APIRouter(
 )
 
 
-@router.get('/random', response_model=List[schemas.CreatePost])
-async def get_random(db: Session = Depends(get_db)):
-    result = db.commit("SELECT * FROM images ORDER BY RANDOM() LIMIT 1")
-    row = result.fetchone()
-    if row:
-        # Convierta la fila a un diccionario
-        row_dict = {
-            "id_image": row.id_image,
-            "added_at": row.added_at,
-            "url": row.url,
-            "caption": row.caption
-        }
-        return schemas.ImageSchema(**row_dict)
-    else:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=f"Couldn't retrieve data")
+@router.get('/random', response_model=schemas.CreatePost)
+async def get_random(db: Session = Depends(database.get_db)):
+    try:
+        result = db.execute(text("SELECT * FROM posts ORDER BY RANDOM() LIMIT 1")).fetchone()
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Couldn't retrieve data"
+            )
+        return result
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal Server Error"
+        )
 
 
 @router.get('/', response_model=List[schemas.CreatePost])

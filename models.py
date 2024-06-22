@@ -5,7 +5,6 @@ from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean, text
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import relationship
 
 #pip install psycopg2
