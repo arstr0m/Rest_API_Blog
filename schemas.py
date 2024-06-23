@@ -11,28 +11,28 @@ class PostBase(BaseModel):
     status: str = 'ACT'
     publishing_date: Optional[datetime] = None
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ImageBase(BaseModel):
     url: str
     caption: str
     class Config:
-        orm_mode: True
+        from_attributes: True
 
 class TagBase(BaseModel):
     title: str
     status: str
 
     class Config:
-        orm_mode: True
+        from_attributes: True
 class CreatePost(PostBase):
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CreateImage(ImageBase):
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CreateTag(TagBase):
     class Config:
-        orm_mode = True
+        from_attributes = True
