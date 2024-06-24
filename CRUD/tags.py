@@ -1,20 +1,22 @@
-from sqlalchemy import text
 from typing import List
+
+from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from starlette import status
-import models
-import schemas
-from fastapi import APIRouter
-from database import get_db
+
+from Data.database import get_db
+from Models import models
+from Schemas import schemas
 
 router = APIRouter(
     prefix='/tags',
     tags=['Tags']
 )
 
-##TODO FIX THIS
-@router.get('/',response_model=schemas.CreatePost)
+
+@router.get('/', response_model=schemas.CreateTag)
 async def get_random_tag(db: Session = Depends(get_db)):
     try:
         result = db.execute(text("SELECT * FROM tag ORDER BY RANDOM() LIMIT 1")).fetchone()
@@ -31,6 +33,7 @@ async def get_random_tag(db: Session = Depends(get_db)):
             detail="Internal Server Error" + str(e)
         )
 
+
 @router.get('/all', response_model=List[schemas.CreateTag])
 async def get_all_tags(db: Session = Depends(get_db)):
     try:
@@ -42,7 +45,8 @@ async def get_all_tags(db: Session = Depends(get_db)):
             detail="Internal Server Error " + str(e)
         )
 
-@router.post('/', status_code=status.HTTP_201_CREATED, response_model=List[schemas.CreateTag])
+
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.CreateTag)
 async def post_tags(tag_tag: schemas.CreateTag, db: Session = Depends(get_db)):
     try:
         new_tag = models.Tag(**tag_tag.dict())

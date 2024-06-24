@@ -1,14 +1,14 @@
 from typing import List
+
+from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from starlette import status
 
-import database
-import models
-import schemas
-from fastapi import APIRouter
-from database import get_db
+from Data.database import get_db
+from Models import models
+from Schemas import schemas
 
 router = APIRouter(
     prefix='/posts',
@@ -16,6 +16,7 @@ router = APIRouter(
 )
 
 
+# TODO add search post images using post id, and post tag using post id
 @router.get('/', response_model=schemas.CreatePost)
 async def get_random_post(db: Session = Depends(get_db)):
     try:
@@ -75,8 +76,9 @@ def gest_post_by_id(id_post: int, db: Session = Depends(get_db)):
             detail="Internal Server Error " + str(e)
         )
 
-##TODO fix this
-@router.delete('/{id_post}', status_code=status.HTTP_204_NO_CONTENT)
+
+##TODO add to delete a message
+@router.delete('/{id_post}', status_code=status.HTTP_200_OK)
 async def delete_post(id_post: int, db: Session = Depends(get_db)):
     try:
         deleted_post = db.query(models.Post).filter(models.Post.id_post == id_post)
@@ -85,8 +87,7 @@ async def delete_post(id_post: int, db: Session = Depends(get_db)):
                                 detail=f"The id: {id_post} you requested for does not exist")
         deleted_post.delete(synchronize_session=False)
         db.commit()
-        raise HTTPException(status_code=status.HTTP_200_OK,
-                            detail=f"Deleted")
+        return {"message": "Post deleted successfully"}
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

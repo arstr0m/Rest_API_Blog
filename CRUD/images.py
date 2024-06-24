@@ -1,17 +1,20 @@
-from sqlalchemy import text
 from typing import List
+
+from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from starlette import status
-import models
-import schemas
-from fastapi import APIRouter
-from database import get_db
+
+from Data.database import get_db
+from Models import models
+from Schemas import schemas
 
 router = APIRouter(
     prefix='/images',
     tags=['Images']
 )
+
 
 @router.get('/', response_model=schemas.CreateImage)
 async def get_random_image(db: Session = Depends(get_db)):
@@ -30,6 +33,7 @@ async def get_random_image(db: Session = Depends(get_db)):
             detail="Internal Server Error"
         )
 
+
 @router.get('/all', response_model=List[schemas.CreateImage])
 async def get_all_images(db: Session = Depends(get_db)):
     try:
@@ -42,7 +46,9 @@ async def get_all_images(db: Session = Depends(get_db)):
             detail="Internal Server Error"
         )
 
-@router.post('/', status_code=status.HTTP_201_CREATED, response_model=List[schemas.CreateImage])
+
+##it was removed List cast from response model
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.CreateImage)
 async def post_images(image_image: schemas.CreateImage, db: Session = Depends(get_db)):
     try:
         new_image = models.Image(**image_image.dict())
@@ -56,7 +62,8 @@ async def post_images(image_image: schemas.CreateImage, db: Session = Depends(ge
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal Server Error"
         )
-##TODO fix this
+
+
 @router.get('/{id_image}', response_model=schemas.CreateImage, status_code=status.HTTP_200_OK)
 def get_image_by_id(id_image: int, db: Session = Depends(get_db)):
     try:
@@ -71,6 +78,7 @@ def get_image_by_id(id_image: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal Server Error"
         )
+
 
 @router.delete('/{id_image}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_image(id_image: int, db: Session = Depends(get_db)):
@@ -87,6 +95,7 @@ async def delete_image(id_image: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal Server Error"
         )
+
 
 @router.put('/{id_image}', response_model=schemas.CreateImage)
 def update_image(upd_image: schemas.ImageBase, id_image: int, db: Session = Depends(get_db)):
