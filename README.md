@@ -3,7 +3,8 @@
 
 REST API for a personal blog that allows adding different images and tags for each post. Using FastAPI and PostgreSQL
 
- <img src="https://drive.google.com/uc?id=1nTRpwv9CuMM0Sp1gmw2HO9dID-p28Krq" style="width:50%; height:auto; margin:auto; display:block; />
+ <img src="https://drive.google.com/uc?id=1nTRpwv9CuMM0Sp1gmw2HO9dID-p28Krq" style="width:50%; height:auto; margin:auto; display:block;" />
+
 
 ## Tech
 
